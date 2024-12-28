@@ -360,7 +360,10 @@ class NavigationScreen : Screen {
                                     InputField(
                                         enabled = true,
                                         query = model.feedFilterQuery.value,
-                                        onQueryChange = { model.feedFilterQuery.value = it },
+                                        onQueryChange = {
+                                            model.feedFilterQuery.value = it
+                                            model.filterFeed()
+                                        },
                                         expanded = model.showFilteredFeed.value,
                                         onExpandedChange = { model.showFilteredFeed.value = it },
                                         placeholder = { Text(text = stringResource(id = R.string.feed_search_placeholder)) },
