@@ -2,12 +2,7 @@ package cc.sovellus.vrcaa.ui.screen.login
 
 import android.content.ClipboardManager
 import android.content.Context
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -17,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberNavigatorScreenModel
@@ -39,7 +33,6 @@ class MfaScreen(
     @Composable
     override fun Content() {
 
-
         val navigator = LocalNavigator.currentOrThrow
         val context = LocalContext.current
 
@@ -47,63 +40,76 @@ class MfaScreen(
             navigator.rememberNavigatorScreenModel { MfaScreenModel(authType) }
 
         Scaffold { padding ->
-            Column(
+            Box(
                 modifier = Modifier
-                    .widthIn(Dp.Unspecified, 520.dp)
                     .fillMaxSize()
-                    .padding(top = padding.calculateTopPadding()),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
+                    .padding(padding),
+                contentAlignment = Alignment.Center
             ) {
+                Column(
+                    modifier = Modifier
+                        .widthIn(max = 520.dp)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
 
-                Text(
-                    text = if (authType == IAuth.AuthType.AUTH_EMAIL) {
-                        stringResource(R.string.auth_text_email)
-                    } else {
-                        stringResource(R.string.auth_text_app)
-                    }
-                )
-
-                CodeInput(
-                    input = screenModel.code
-                )
-
-                Button(modifier = Modifier
-                    .width(200.dp)
-                    .padding(4.dp), onClick = {
-                    screenModel.verify { result ->
-                        if (result) {
-                            navigator.replace(NavigationScreen())
+                    Text(
+                        text = if (authType == IAuth.AuthType.AUTH_EMAIL) {
+                            stringResource(R.string.auth_text_email)
+                        } else {
+                            stringResource(R.string.auth_text_app)
                         }
-                    }
-                }) {
-                    Text(text = stringResource(R.string.auth_button_text))
-                }
+                    )
 
-                Button(modifier = Modifier
-                    .width(200.dp)
-                    .padding(4.dp), onClick = {
-                    val clipboard: ClipboardManager? =
-                        context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                    if (clipboard?.hasPrimaryClip() == true) {
-                        val clipData = clipboard.primaryClip
-                        if ((clipData?.itemCount ?: 0) > 0) {
-                            val clipItem = clipData?.getItemAt(0)
-                            val clipText = clipItem?.text?.toString()
-                            if (clipText?.length == 6) {
-                                screenModel.code.value = clipText
-                                screenModel.verify { result ->
-                                    if (result) {
-                                        navigator.replace(NavigationScreen())
+                    CodeInput(
+                        input = screenModel.code
+                    )
+
+                    Button(
+                        modifier = Modifier
+                            .width(200.dp)
+                            .padding(4.dp),
+                        onClick = {
+                            screenModel.verify { result ->
+                                if (result) {
+                                    navigator.replace(NavigationScreen())
+                                }
+                            }
+                        }
+                    ) {
+                        Text(text = stringResource(R.string.auth_button_text))
+                    }
+
+                    Button(
+                        modifier = Modifier
+                            .width(200.dp)
+                            .padding(4.dp),
+                        onClick = {
+                            val clipboard: ClipboardManager? =
+                                context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                            if (clipboard?.hasPrimaryClip() == true) {
+                                val clipData = clipboard.primaryClip
+                                if ((clipData?.itemCount ?: 0) > 0) {
+                                    val clipItem = clipData?.getItemAt(0)
+                                    val clipText = clipItem?.text?.toString()
+                                    if (clipText?.length == 6) {
+                                        screenModel.code.value = clipText
+                                        screenModel.verify { result ->
+                                            if (result) {
+                                                navigator.replace(NavigationScreen())
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
+                    ) {
+                        Text(text = stringResource(R.string.auth_button_paste))
                     }
-                }) {
-                    Text(text = stringResource(R.string.auth_button_paste))
                 }
             }
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()

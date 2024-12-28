@@ -1,24 +1,12 @@
 package cc.sovellus.vrcaa.ui.screen.login
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
@@ -45,41 +33,52 @@ class LoginScreen : Screen {
         var passwordVisibility by remember { mutableStateOf(false) }
 
         Scaffold { padding ->
-            Column(
+            Box(
                 modifier = Modifier
-                    .widthIn(Dp.Unspecified, 520.dp)
                     .fillMaxSize()
-                    .padding(top = padding.calculateTopPadding()),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(padding),
+                contentAlignment = Alignment.Center
             ) {
-                Text(text = stringResource(R.string.login_text))
+                Column(
+                    modifier = Modifier
+                        .widthIn(max = 520.dp)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = stringResource(R.string.login_text))
 
-                TextInput(
-                    title = stringResource(R.string.login_label_username),
-                    input = screenModel.username
-                )
+                    TextInput(
+                        title = stringResource(R.string.login_label_username),
+                        input = screenModel.username
+                    )
 
-                PasswordInput(title = stringResource(R.string.login_label_password),
-                    input = screenModel.password,
-                    visible = passwordVisibility,
-                    onVisibilityChange = {
-                        passwordVisibility = !passwordVisibility
-                    })
-
-                Button(modifier = Modifier
-                    .width(200.dp)
-                    .padding(8.dp), onClick = {
-                    screenModel.doLogin { result, type ->
-                        if (result) {
-                            if (type == IAuth.AuthType.AUTH_NONE)
-                                navigator.replace(NavigationScreen())
-                            else
-                                navigator.replace(MfaScreen(type))
+                    PasswordInput(
+                        title = stringResource(R.string.login_label_password),
+                        input = screenModel.password,
+                        visible = passwordVisibility,
+                        onVisibilityChange = {
+                            passwordVisibility = !passwordVisibility
                         }
+                    )
+
+                    Button(
+                        modifier = Modifier
+                            .width(200.dp)
+                            .padding(8.dp),
+                        onClick = {
+                            screenModel.doLogin { result, type ->
+                                if (result) {
+                                    if (type == IAuth.AuthType.AUTH_NONE)
+                                        navigator.replace(NavigationScreen())
+                                    else
+                                        navigator.replace(MfaScreen(type))
+                                }
+                            }
+                        }
+                    ) {
+                        Text(text = stringResource(R.string.login_button_text))
                     }
-                }) {
-                    Text(text = stringResource(R.string.login_button_text))
                 }
             }
 
