@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -495,7 +496,7 @@ class NavigationScreen : Screen {
                                 )
 
                                 Column(
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
@@ -707,7 +708,9 @@ class NavigationScreen : Screen {
                                             "name"
                                         )
                                         ComboInput(
-                                            options = options, selection = model.sortWorlds
+                                            options = options,
+                                            selection = model.sortWorlds,
+                                            modifier = Modifier.width(200.dp)
                                         )
                                     })
                             }
@@ -723,7 +726,8 @@ class NavigationScreen : Screen {
                                                     it.toIntOrNull() ?: model.worldsAmount.intValue
                                             },
                                             singleLine = true,
-                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                            modifier = Modifier.width(200.dp)
                                         )
                                     })
                             }
@@ -749,7 +753,8 @@ class NavigationScreen : Screen {
                                                     it.toInt()
                                             },
                                             singleLine = true,
-                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                            modifier = Modifier.width(200.dp)
                                         )
                                     })
                             }
@@ -775,7 +780,8 @@ class NavigationScreen : Screen {
                                         ComboInput(
                                             options = options,
                                             selection = model.avatarProvider,
-                                            readableOptions = optionsReadable
+                                            readableOptions = optionsReadable,
+                                            modifier = Modifier.width(200.dp)
                                         )
                                     })
                             }
@@ -791,7 +797,8 @@ class NavigationScreen : Screen {
                                                     it.toIntOrNull() ?: model.avatarsAmount.intValue
                                             },
                                             singleLine = true,
-                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                            modifier = Modifier.width(200.dp)
                                         )
                                     })
                             }
@@ -819,7 +826,8 @@ class NavigationScreen : Screen {
                                                     it.toIntOrNull() ?: model.groupsAmount.intValue
                                             },
                                             singleLine = true,
-                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                            modifier = Modifier.width(200.dp)
                                         )
                                     })
                             }
