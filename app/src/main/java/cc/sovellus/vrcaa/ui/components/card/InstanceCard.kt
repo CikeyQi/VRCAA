@@ -39,9 +39,6 @@ import com.bumptech.glide.integration.compose.placeholder
 @Composable
 fun InstanceCard(profile: LimitedUser, instance: Instance, callback: () -> Unit) {
     ElevatedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
         modifier = Modifier
             .height(160.dp)
             .widthIn(Dp.Unspecified, 520.dp)

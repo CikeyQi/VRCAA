@@ -329,9 +329,6 @@ class UserProfileScreen(
                                 horizontalAlignment = Alignment.Start
                             ) {
                                 ElevatedCard(
-                                    elevation = CardDefaults.cardElevation(
-                                        defaultElevation = 6.dp
-                                    ),
                                     modifier = Modifier
                                         .padding(top = 16.dp)
                                         .defaultMinSize(minHeight = 80.dp)
@@ -350,9 +347,6 @@ class UserProfileScreen(
                             horizontalAlignment = Alignment.Start
                         ) {
                             ElevatedCard(
-                                elevation = CardDefaults.cardElevation(
-                                    defaultElevation = 6.dp
-                                ),
                                 modifier = Modifier
                                     .padding(top = 16.dp)
                                     .defaultMinSize(minHeight = 80.dp)
@@ -370,9 +364,6 @@ class UserProfileScreen(
                             horizontalAlignment = Alignment.Start
                         ) {
                             ElevatedCard(
-                                elevation = CardDefaults.cardElevation(
-                                    defaultElevation = 6.dp
-                                ),
                                 modifier = Modifier
                                     .padding(top = 16.dp)
                                     .defaultMinSize(minHeight = 80.dp)

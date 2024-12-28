@@ -48,9 +48,6 @@ fun ProfileCard(
     badges: List<Badge>
 ) {
     ElevatedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
         modifier = Modifier
             .height(270.dp)
             .widthIn(Dp.Unspecified, 520.dp)

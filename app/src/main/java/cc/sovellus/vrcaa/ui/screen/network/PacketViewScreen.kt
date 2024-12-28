@@ -103,9 +103,6 @@ class PacketViewScreen(
                 item {
                     url?.let {
                         ElevatedCard(
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 6.dp
-                            ),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(4.dp)
@@ -124,9 +121,6 @@ class PacketViewScreen(
 
                 item {
                     ElevatedCard(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 6.dp
-                        ),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(4.dp)

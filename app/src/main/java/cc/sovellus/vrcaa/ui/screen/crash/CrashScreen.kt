@@ -68,9 +68,6 @@ fun CrashScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 ElevatedCard(
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 6.dp
-                    ),
                     modifier = Modifier.padding(8.dp)
                 ) {
                     LazyColumn {

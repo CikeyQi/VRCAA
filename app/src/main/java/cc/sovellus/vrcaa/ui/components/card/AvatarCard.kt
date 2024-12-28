@@ -27,9 +27,6 @@ import com.bumptech.glide.integration.compose.placeholder
 @Composable
 fun AvatarCard(avatar: Avatar) {
     ElevatedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
         modifier = Modifier
             .height(240.dp)
             .widthIn(Dp.Unspecified, 520.dp)

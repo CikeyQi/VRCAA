@@ -60,9 +60,6 @@ fun WorldCard(
     }
 
     ElevatedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
         modifier = Modifier
             .height(240.dp)
             .widthIn(Dp.Unspecified, 520.dp)

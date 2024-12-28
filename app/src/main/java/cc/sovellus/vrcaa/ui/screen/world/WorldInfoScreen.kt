@@ -290,9 +290,6 @@ class WorldInfoScreen(
                     horizontalAlignment = Alignment.Start,
                 ) {
                     ElevatedCard(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 6.dp
-                        ),
                         modifier = Modifier
                             .padding(bottom = 16.dp)
                             .widthIn(Dp.Unspecified, 520.dp)
@@ -302,9 +299,6 @@ class WorldInfoScreen(
                     }
 
                     ElevatedCard(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 6.dp
-                        ),
                         modifier = Modifier
                             .padding(bottom = 16.dp)
                             .widthIn(Dp.Unspecified, 520.dp)

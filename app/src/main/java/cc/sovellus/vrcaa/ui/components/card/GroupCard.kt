@@ -50,9 +50,6 @@ fun GroupCard(
     callback: (() -> Unit?)? = null
 ) {
     ElevatedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
         modifier = Modifier
             .height(280.dp)
             .padding(16.dp)

@@ -45,9 +45,6 @@ fun RowItemWithFriends(
     onClick: () -> Unit
 ) {
     ElevatedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp
-        ),
         modifier = Modifier
             .height(185.dp)
             .width(240.dp)

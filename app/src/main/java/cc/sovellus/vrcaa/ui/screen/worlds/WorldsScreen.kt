@@ -79,9 +79,6 @@ class WorldsScreen(
         onClick: () -> Unit
     ) {
         ElevatedCard(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 2.dp
-            ),
             modifier = Modifier
                 .padding(4.dp)
                 .fillMaxWidth()

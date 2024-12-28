@@ -274,9 +274,6 @@ class GroupScreen(
                     horizontalAlignment = Alignment.Start
                 ) {
                     ElevatedCard(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 6.dp
-                        ),
                         modifier = Modifier
                             .padding(bottom = 16.dp)
                             .fillMaxWidth()
@@ -287,9 +284,6 @@ class GroupScreen(
                     }
 
                     ElevatedCard(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 6.dp
-                        ),
                         modifier = Modifier
                             .padding(bottom = 16.dp)
                             .fillMaxWidth()
