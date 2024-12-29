@@ -17,10 +17,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -213,45 +215,45 @@ class AvatarScreen(
                     Spacer(modifier = Modifier.padding(8.dp))
 
                     ElevatedCard(
-                        modifier = Modifier.widthIn(Dp.Unspecified, 520.dp)
+                        modifier = Modifier
+                            .widthIn(Dp.Unspecified, 520.dp)
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp)
                     ) {
-                        SubHeader(title = stringResource(R.string.avatar_title_description))
-                        Description(text = avatar.description)
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            SubHeader(title = stringResource(R.string.avatar_title_description))
+                            Description(text = avatar.description)
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-                        val userTimeZone = TimeZone.getDefault().toZoneId()
-                        val formatter = DateTimeFormatter.ofLocalizedDateTime(java.time.format.FormatStyle.SHORT)
-                            .withLocale(Locale.getDefault())
+                            val userTimeZone = TimeZone.getDefault().toZoneId()
+                            val formatter =
+                                DateTimeFormatter.ofLocalizedDateTime(java.time.format.FormatStyle.SHORT)
+                                    .withLocale(Locale.getDefault())
 
-                        val createdAtFormatted = ZonedDateTime.parse(avatar.createdAt).withZoneSameInstant(userTimeZone).format(formatter)
-                        val updatedAtFormatted = ZonedDateTime.parse(avatar.updatedAt).withZoneSameInstant(userTimeZone).format(formatter)
+                            val createdAtFormatted = ZonedDateTime.parse(avatar.createdAt)
+                                .withZoneSameInstant(userTimeZone).format(formatter)
+                            val updatedAtFormatted = ZonedDateTime.parse(avatar.updatedAt)
+                                .withZoneSameInstant(userTimeZone).format(formatter)
 
-                        SubHeader(title = stringResource(R.string.avatar_title_created_at))
-                        Description(text = createdAtFormatted)
+                            SubHeader(title = stringResource(R.string.avatar_title_created_at))
+                            Description(text = createdAtFormatted)
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-                        SubHeader(title = stringResource(R.string.avatar_title_updated_at))
-                        Description(text = updatedAtFormatted)
+                            SubHeader(title = stringResource(R.string.avatar_title_updated_at))
+                            Description(text = updatedAtFormatted)
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-                        SubHeader(title = stringResource(R.string.avatar_title_version))
-                        Description(text = avatar.version.toString())
+                            SubHeader(title = stringResource(R.string.avatar_title_version))
+                            Description(text = avatar.version.toString())
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-                        val platforms = avatar.unityPackages.joinToString(", ") {
-                            when (it.platform) {
-                                "standalonewindows" -> "PC"
-                                "android" -> "Android"
-                                "ios" -> "iOS"
-                                else -> it.platform
-                            }
+                            SubHeader(title = stringResource(R.string.avatar_title_content_labels))
+                            BadgesFromTags(
+                                tags = avatar.tags,
+                                tagPropertyName = "content",
+                                localizationResourceInt = R.string.avatar_text_content_labels_not_found
+                            )
                         }
-
-                        SubHeader(title = stringResource(R.string.avatar_title_platform))
-                        Description(text = platforms)
-
-                        SubHeader(title = stringResource(R.string.avatar_title_content_labels))
-                        BadgesFromTags(
-                            tags = avatar.tags,
-                            tagPropertyName = "content",
-                            localizationResourceInt = R.string.avatar_text_content_labels_not_found
-                        )
                     }
                 }
             }

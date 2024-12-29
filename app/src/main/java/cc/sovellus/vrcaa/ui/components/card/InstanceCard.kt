@@ -3,8 +3,10 @@ package cc.sovellus.vrcaa.ui.components.card
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -40,7 +42,6 @@ import com.bumptech.glide.integration.compose.placeholder
 fun InstanceCard(profile: LimitedUser, instance: Instance, callback: () -> Unit) {
     ElevatedCard(
         modifier = Modifier
-            .height(160.dp)
             .widthIn(Dp.Unspecified, 520.dp)
             .fillMaxWidth()
             .clickable(
@@ -50,91 +51,97 @@ fun InstanceCard(profile: LimitedUser, instance: Instance, callback: () -> Unit)
     ) {
         val result = LocationHelper.parseLocationInfo(profile.location)
 
-        SubHeader(title = stringResource(id = R.string.profile_label_current_location))
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.padding(12.dp)
-        ) {
-            GlideImage(
-                model = instance.world.imageUrl,
-                contentDescription = null,
-                modifier = Modifier
-                    .width(160.dp)
-                    .height(100.dp)
-                    .clip(RoundedCornerShape(10)),
-                contentScale = ContentScale.Crop,
-                loading = placeholder(R.drawable.image_placeholder),
-                failure = placeholder(R.drawable.image_placeholder)
-            )
-
+        Box(modifier = Modifier.padding(16.dp)) {
             Column(
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.fillMaxSize()
             ) {
-                Text(
-                    text = instance.world.name,
-                    textAlign = TextAlign.Left,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = "${result.instanceType} #${instance.name}",
-                    textAlign = TextAlign.Left,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                SubHeader(title = stringResource(id = R.string.profile_label_current_location))
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.padding(12.dp)
                 ) {
-                    Text(
-                        text = "(${instance.nUsers} of ${instance.world.capacity})",
-                        textAlign = TextAlign.Left,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                    GlideImage(
+                        model = instance.world.imageUrl,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .width(160.dp)
+                            .height(100.dp)
+                            .clip(RoundedCornerShape(10)),
+                        contentScale = ContentScale.Crop,
+                        loading = placeholder(R.drawable.image_placeholder),
+                        failure = placeholder(R.drawable.image_placeholder)
                     )
 
-                    // TODO: move this away from UI
-                    if (result.regionId.isNotEmpty()) {
-                        when (result.regionId.lowercase()) {
-                            "eu" -> Image(
-                                painter = painterResource(R.drawable.flag_eu),
-                                modifier = Modifier.padding(start = 6.dp),
-                                contentDescription = "Region flag"
-                            )
-                            "jp" -> Image(
-                                painter = painterResource(R.drawable.flag_jp),
-                                modifier = Modifier.padding(start = 6.dp),
-                                contentDescription = "Region flag"
-                            )
-                            "us" -> Image(
-                                painter = painterResource(R.drawable.flag_us),
-                                modifier = Modifier.padding(start = 6.dp),
-                                contentDescription = "Region flag"
-                            )
-                            "use" -> Image(
-                                painter = painterResource(R.drawable.flag_us),
-                                modifier = Modifier.padding(start = 6.dp),
-                                contentDescription = "Region flag"
-                            )
-                            "usw" -> Image(
-                                painter = painterResource(R.drawable.flag_us),
-                                modifier = Modifier.padding(start = 6.dp),
-                                contentDescription = "Region flag"
-                            )
-                        }
-                    } else {
-                        Image(
-                            painter = painterResource(R.drawable.flag_us),
-                            modifier = Modifier.padding(start = 6.dp),
-                            contentDescription = "Region flag",
+                    Column(
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Text(
+                            text = instance.world.name,
+                            textAlign = TextAlign.Left,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
+                        Text(
+                            text = "${result.instanceType} #${instance.name}",
+                            textAlign = TextAlign.Left,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text(
+                                text = "(${instance.nUsers} of ${instance.world.capacity})",
+                                textAlign = TextAlign.Left,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+
+                            // TODO: move this away from UI
+                            if (result.regionId.isNotEmpty()) {
+                                when (result.regionId.lowercase()) {
+                                    "eu" -> Image(
+                                        painter = painterResource(R.drawable.flag_eu),
+                                        modifier = Modifier.padding(start = 6.dp),
+                                        contentDescription = "Region flag"
+                                    )
+                                    "jp" -> Image(
+                                        painter = painterResource(R.drawable.flag_jp),
+                                        modifier = Modifier.padding(start = 6.dp),
+                                        contentDescription = "Region flag"
+                                    )
+                                    "us" -> Image(
+                                        painter = painterResource(R.drawable.flag_us),
+                                        modifier = Modifier.padding(start = 6.dp),
+                                        contentDescription = "Region flag"
+                                    )
+                                    "use" -> Image(
+                                        painter = painterResource(R.drawable.flag_us),
+                                        modifier = Modifier.padding(start = 6.dp),
+                                        contentDescription = "Region flag"
+                                    )
+                                    "usw" -> Image(
+                                        painter = painterResource(R.drawable.flag_us),
+                                        modifier = Modifier.padding(start = 6.dp),
+                                        contentDescription = "Region flag"
+                                    )
+                                }
+                            } else {
+                                Image(
+                                    painter = painterResource(R.drawable.flag_us),
+                                    modifier = Modifier.padding(start = 6.dp),
+                                    contentDescription = "Region flag",
+                                )
+                            }
+                        }
                     }
                 }
             }

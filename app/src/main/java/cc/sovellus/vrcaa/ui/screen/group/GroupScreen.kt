@@ -5,47 +5,23 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cabin
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MultiChoiceSegmentedButtonRow
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.rememberScreenModel
@@ -204,7 +180,8 @@ class GroupScreen(
                         .fillMaxSize()
                         .padding(
                             top = it.calculateTopPadding(), bottom = it.calculateBottomPadding()
-                        ),
+                        )
+                        .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -244,54 +221,43 @@ class GroupScreen(
 
     @Composable
     private fun ShowGroupInfo(group: Group) {
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    GroupCard(
-                        groupName = group.name,
-                        discriminator = group.discriminator,
-                        shortCode = group.shortCode,
-                        bannerUrl = group.bannerUrl,
-                        iconUrl = group.iconUrl,
-                        totalMembers = group.memberCount,
-                        languages = group.languages
-                    )
+            GroupCard(
+                groupName = group.name,
+                discriminator = group.discriminator,
+                shortCode = group.shortCode,
+                bannerUrl = group.bannerUrl,
+                iconUrl = group.iconUrl,
+                totalMembers = group.memberCount,
+                languages = group.languages
+            )
+
+            ElevatedCard(
+                modifier = Modifier
+                    .widthIn(Dp.Unspecified, 520.dp)
+                    .fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    SubHeader(title = stringResource(R.string.group_page_label_description))
+                    Description(text = group.description)
                 }
             }
 
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp),
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    ElevatedCard(
-                        modifier = Modifier
-                            .padding(bottom = 16.dp)
-                            .fillMaxWidth()
-                            .defaultMinSize(minHeight = 80.dp),
-                    ) {
-                        SubHeader(title = stringResource(R.string.group_page_label_description))
-                        Description(text = group.description)
-                    }
+            Spacer(modifier = Modifier.height(16.dp))
 
-                    ElevatedCard(
-                        modifier = Modifier
-                            .padding(bottom = 16.dp)
-                            .fillMaxWidth()
-                            .defaultMinSize(minHeight = 80.dp),
-                    ) {
-                        SubHeader(title = stringResource(R.string.group_page_label_rules))
-                        Description(text = group.rules)
-                    }
+            ElevatedCard(
+                modifier = Modifier
+                    .widthIn(Dp.Unspecified, 520.dp)
+                    .fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    SubHeader(title = stringResource(R.string.group_page_label_rules))
+                    Description(text = group.rules)
                 }
             }
         }
@@ -314,17 +280,18 @@ class GroupScreen(
             )
         }
 
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 16.dp)
         ) {
             if (instances.isEmpty()) {
-                item {
-                    Text(stringResource(R.string.world_instance_no_public_instances_message))
-                }
+                Text(
+                    text = stringResource(R.string.world_instance_no_public_instances_message),
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             } else {
-                items(instances) { instance ->
+                instances.forEach { instance ->
                     val result = LocationHelper.parseLocationInfo(instance.location)
                     ListItem(headlineContent = {
                         Text("Capacity: ${instance.memberCount}/${instance.world.capacity}, ${result.instanceType}")
@@ -332,10 +299,13 @@ class GroupScreen(
                         Text("${instance.world.name} #${instance.instanceId}")
                     }, trailingContent = {
                         RegionFlag(result.regionId)
-                    }, modifier = Modifier.clickable(onClick = {
-                        dialogState.value = true
-                        model.clickedInstance.value = instance.location
-                    }))
+                    }, modifier = Modifier
+                        .clickable(onClick = {
+                            dialogState.value = true
+                            model.clickedInstance.value = instance.location
+                        })
+                        .padding(vertical = 8.dp)
+                    )
                 }
             }
         }

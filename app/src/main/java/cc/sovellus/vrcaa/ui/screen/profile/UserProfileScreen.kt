@@ -12,11 +12,14 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -25,6 +28,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -278,111 +282,80 @@ class UserProfileScreen(
                         onConfirmation = { favoriteDialogShown = false })
                 }
 
-                LazyColumn(
+                Column(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .padding(
                             top = padding.calculateTopPadding(),
-                            bottom = padding.calculateBottomPadding()
-                        ),
-                    verticalArrangement = Arrangement.Top,
+                            bottom = padding.calculateBottomPadding(),
+                            start = 16.dp,
+                            end = 16.dp
+                        )
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    item {
-                        profile.let {
-                            ProfileCard(
-                                thumbnailUrl = it.profilePicOverride.ifEmpty { it.currentAvatarImageUrl },
-                                iconUrl = it.userIcon.ifEmpty { it.profilePicOverride.ifEmpty { it.currentAvatarImageUrl } },
-                                displayName = it.displayName,
-                                statusDescription = it.statusDescription.ifEmpty {
-                                    StatusHelper.getStatusFromString(it.status).toString()
-                                },
-                                trustRankColor = TrustHelper.getTrustRankFromTags(it.tags)
-                                    .toColor(),
-                                statusColor = StatusHelper.getStatusFromString(it.status)
-                                    .toColor(),
-                                tags = profile.tags,
-                                badges = profile.badges
-                            )
-                        }
-                    }
+                ){
+                    ProfileCard(
+                        thumbnailUrl = profile.profilePicOverride.ifEmpty { profile.currentAvatarImageUrl },
+                        iconUrl = profile.userIcon.ifEmpty {
+                            profile.profilePicOverride.ifEmpty { profile.currentAvatarImageUrl }
+                        },
+                        displayName = profile.displayName,
+                        statusDescription = profile.statusDescription.ifEmpty {
+                            StatusHelper.getStatusFromString(profile.status).toString()
+                        },
+                        trustRankColor = TrustHelper.getTrustRankFromTags(profile.tags).toColor(),
+                        statusColor = StatusHelper.getStatusFromString(profile.status).toColor(),
+                        tags = profile.tags,
+                        badges = profile.badges
+                    )
 
-                    item {
-                        if (instance != null) {
-                            Column(
-                                verticalArrangement = Arrangement.SpaceBetween,
-                                horizontalAlignment = Alignment.Start,
-                                modifier = Modifier.padding(top = 16.dp)
-                            ) {
-                                InstanceCard(profile = profile, instance = instance) {
-                                    navigator.push(WorldInfoScreen(instance.worldId))
-                                }
-                            }
-                        }
-                    }
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                    if (profile.note.isNotEmpty()) {
-                        item {
-                            Column(
-                                verticalArrangement = Arrangement.SpaceBetween,
-                                horizontalAlignment = Alignment.Start
-                            ) {
-                                ElevatedCard(
-                                    modifier = Modifier
-                                        .padding(top = 16.dp)
-                                        .defaultMinSize(minHeight = 80.dp)
-                                        .widthIn(Dp.Unspecified, 520.dp),
-                                ) {
-                                    SubHeader(title = stringResource(R.string.profile_label_note))
-                                    Description(text = profile.note)
-                                }
-                            }
-                        }
-                    }
-
-                    item {
+                    if (instance != null) {
                         Column(
                             verticalArrangement = Arrangement.SpaceBetween,
-                            horizontalAlignment = Alignment.Start
+                            horizontalAlignment = Alignment.Start,
                         ) {
-                            ElevatedCard(
-                                modifier = Modifier
-                                    .padding(top = 16.dp)
-                                    .defaultMinSize(minHeight = 80.dp)
-                                    .widthIn(Dp.Unspecified, 520.dp),
-                            ) {
-                                SubHeader(title = stringResource(R.string.profile_label_biography))
-                                Description(text = profile.bio)
+                            InstanceCard(profile = profile, instance = instance) {
+                                navigator.push(WorldInfoScreen(instance.worldId))
                             }
                         }
                     }
 
-                    item {
-                        Column(
-                            verticalArrangement = Arrangement.SpaceBetween,
-                            horizontalAlignment = Alignment.Start
-                        ) {
-                            ElevatedCard(
-                                modifier = Modifier
-                                    .padding(top = 16.dp)
-                                    .defaultMinSize(minHeight = 80.dp)
-                                    .widthIn(Dp.Unspecified, 520.dp),
-                            ) {
-                                if (profile.lastActivity.isNotEmpty()) {
-                                    val userTimeZone = TimeZone.getDefault().toZoneId()
-                                    val formatter = DateTimeFormatter.ofLocalizedDateTime(java.time.format.FormatStyle.SHORT)
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    ElevatedCard(
+                        modifier = Modifier
+                            .widthIn(Dp.Unspecified, 520.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            if (profile.note.isNotEmpty()) {
+                                SubHeader(title = stringResource(R.string.profile_label_note))
+                                Description(text = profile.note)
+                            }
+
+                            SubHeader(title = stringResource(R.string.profile_label_biography))
+                            Description(text = profile.bio)
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                            if (profile.lastActivity.isNotEmpty()) {
+                                val userTimeZone = TimeZone.getDefault().toZoneId()
+                                val formatter =
+                                    DateTimeFormatter.ofLocalizedDateTime(java.time.format.FormatStyle.SHORT)
                                         .withLocale(Locale.getDefault())
 
-                                    val lastActivity = ZonedDateTime.parse(profile.lastActivity).withZoneSameInstant(userTimeZone).format(formatter)
+                                val lastActivity = ZonedDateTime.parse(profile.lastActivity)
+                                    .withZoneSameInstant(userTimeZone).format(formatter)
 
-                                    SubHeader(title = stringResource(R.string.profile_label_last_activity))
-                                    Description(text = lastActivity)
-                                }
-
-                                SubHeader(title = stringResource(R.string.profile_label_date_joined))
-                                Description(text = profile.dateJoined)
+                                SubHeader(title = stringResource(R.string.profile_label_last_activity))
+                                Description(text = lastActivity)
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                             }
+
+                            SubHeader(title = stringResource(R.string.profile_label_date_joined))
+                            Description(text = profile.dateJoined)
                         }
                     }
                 }

@@ -1,18 +1,20 @@
 package cc.sovellus.vrcaa.ui.components.card
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -49,110 +51,116 @@ fun ProfileCard(
 ) {
     ElevatedCard(
         modifier = Modifier
-            .height(270.dp)
             .widthIn(Dp.Unspecified, 520.dp)
             .fillMaxWidth()
     ) {
-
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy((-50).dp),
+        Box(
             modifier = Modifier
-                .height(270.dp)
                 .fillMaxSize()
         ) {
-            item {
-                GlideImage(
-                    model = thumbnailUrl,
-                    contentDescription = null,
+            GlideImage(
+                model = thumbnailUrl,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp),
+                contentScale = ContentScale.Crop,
+                loading = placeholder(R.drawable.image_placeholder),
+                failure = placeholder(R.drawable.image_placeholder)
+            )
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 120.dp)
+            ) {
+                Badge(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(160.dp),
-                    contentScale = ContentScale.Crop,
-                    loading = placeholder(R.drawable.image_placeholder),
-                    failure = placeholder(R.drawable.image_placeholder)
+                        .size(80.dp)
+                        .align(Alignment.Center),
+                ) {
+                    GlideImage(
+                        model = iconUrl,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(72.dp)
+                            .clip(RoundedCornerShape(50)),
+                        contentScale = ContentScale.Crop,
+                        alignment = Alignment.Center,
+                        loading = placeholder(R.drawable.icon_placeholder),
+                        failure = placeholder(R.drawable.icon_placeholder)
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 190.dp)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = displayName,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center,
+                    color = trustRankColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
 
-            item {
-                Column(
-                    modifier = Modifier.padding(start = 16.dp)
-                ) {
-                    Badge(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                        modifier = Modifier
-                            .size(80.dp)
-                            .align(Alignment.CenterHorizontally)
-                    ) {
-                        GlideImage(
-                            model = iconUrl,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(72.dp)
-                                .clip(RoundedCornerShape(50)),
-                            contentScale = ContentScale.Crop,
-                            alignment = Alignment.Center,
-                            loading = placeholder(R.drawable.icon_placeholder),
-                            failure = placeholder(R.drawable.icon_placeholder)
-                        )
-                    }
-                }
-            }
-
-            item {
-                Row {
-                    Text(
-                        text = displayName,
-                        modifier = Modifier
-                            .padding(start = 12.dp, top = 60.dp)
-                            .weight(0.70f),
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        textAlign = TextAlign.Left,
-                        color = trustRankColor,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(0.30f)
-                            .padding(end = 4.dp), horizontalArrangement = Arrangement.End
-                    ) {
-                        Languages(languages = tags, modifier = Modifier.padding(top = 8.dp))
-                    }
-                }
-            }
-            item {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 230.dp)
+                    .padding(16.dp)
+            ) {
                 Row(
-                    modifier = Modifier.padding(start = 12.dp, top = 50.dp)
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Row(
-                        modifier = Modifier.weight(0.70f),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Badge(containerColor = statusColor, modifier = Modifier.size(16.dp))
-                        Text(
-                            modifier = Modifier.padding(start = 8.dp),
-                            text = statusDescription,
-                            textAlign = TextAlign.Left,
-                            fontWeight = FontWeight.SemiBold,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
+                    Badge(containerColor = statusColor, modifier = Modifier.size(16.dp))
+
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = statusDescription,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.SemiBold,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 160.dp, start = 16.dp)
+            ) {
+
+                Row(
+                    modifier = Modifier.heightIn(max = 32.dp)
+                ) {
+                    for (badge in badges) {
+                        GlideImage(
+                            model = badge.badgeImageUrl,
+                            contentDescription = null,
+                            modifier = Modifier.size(32.dp).padding(2.dp),
+                            alpha = if (badge.showcased) { 1.0f } else { 0.5f }
                         )
                     }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(0.30f)
-                            .padding(end = 8.dp), horizontalArrangement = Arrangement.End
-                    ) {
-                        for (badge in badges) {
-                            GlideImage(model = badge.badgeImageUrl, contentDescription = null, modifier = Modifier.size(28.dp).padding(2.dp), alpha = if (badge.showcased) { 1.0f } else { 0.5f })
-                        }
-                    }
                 }
+            }
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 160.dp, end = 16.dp)
+            ) {
+                Languages(languages = tags, modifier = Modifier.heightIn(max = 32.dp))
             }
         }
     }

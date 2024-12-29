@@ -4,18 +4,10 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cabin
@@ -23,25 +15,8 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MultiChoiceSegmentedButtonRow
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -71,7 +46,6 @@ import cc.sovellus.vrcaa.ui.components.dialog.GenericDialog
 import cc.sovellus.vrcaa.ui.components.layout.InstanceItem
 import cc.sovellus.vrcaa.ui.screen.profile.UserProfileScreen
 import java.text.NumberFormat
-import java.text.SimpleDateFormat
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -230,7 +204,8 @@ class WorldInfoScreen(
                             .padding(
                                 top = it.calculateTopPadding(),
                                 bottom = it.calculateBottomPadding()
-                            ),
+                            )
+                            .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -276,95 +251,96 @@ class WorldInfoScreen(
 
     @Composable
     fun ShowInfo(world: World) {
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item {
-                WorldCard(world)
+            WorldCard(world)
 
-                Column(
-                    modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    horizontalAlignment = Alignment.Start,
-                ) {
-                    ElevatedCard(
-                        modifier = Modifier
-                            .padding(bottom = 16.dp)
-                            .widthIn(Dp.Unspecified, 520.dp)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            ElevatedCard(
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .widthIn(Dp.Unspecified, 520.dp)
+                    .fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    SubHeader(title = stringResource(R.string.world_label_description))
+                    Description(text = world.description)
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    val userTimeZone = TimeZone.getDefault().toZoneId()
+                    val formatter = DateTimeFormatter.ofLocalizedDateTime(java.time.format.FormatStyle.SHORT)
+                        .withLocale(Locale.getDefault())
+
+                    val createdAtFormatted = ZonedDateTime.parse(world.createdAt).withZoneSameInstant(userTimeZone).format(formatter)
+                    val updatedAtFormatted = ZonedDateTime.parse(world.updatedAt).withZoneSameInstant(userTimeZone).format(formatter)
+
+                    SubHeader(title = stringResource(R.string.world_title_occupants))
+                    Description(text = "Public (${NumberFormat.getInstance().format(world.publicOccupants)}) Private (${NumberFormat.getInstance().format(world.privateOccupants)}) Total (${NumberFormat.getInstance().format(world.occupants)})")
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    val occupancyRate = world.visits.takeIf { it != 0 }?.let {
+                        String.format(Locale.ENGLISH, "%.1f", world.favorites.toFloat() / it.toFloat() * 100)
+                    } ?: "0.0%"
+
+                    SubHeader(title = stringResource(R.string.world_title_favorites))
+                    Description(text = "${NumberFormat.getInstance().format(world.favorites)} (${occupancyRate}%)")
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    SubHeader(title = stringResource(R.string.world_title_visits))
+                    Description(text = NumberFormat.getInstance().format(world.visits))
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    SubHeader(title = stringResource(R.string.world_title_capacity))
+                    Description(text = "${world.recommendedCapacity} (${world.capacity})")
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    SubHeader(title = stringResource(R.string.world_title_created_at))
+                    Description(text = createdAtFormatted)
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    SubHeader(title = stringResource(R.string.world_title_updated_at))
+                    Description(text = updatedAtFormatted)
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    SubHeader(title = stringResource(R.string.world_title_labs_publication_date))
+                    Description(text = updatedAtFormatted)
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    SubHeader(title = stringResource(R.string.world_title_publication_date))
+                    Description(text = updatedAtFormatted)
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    SubHeader(title = "${stringResource(R.string.world_title_heat)} (${world.heat})")
+                    Row(
+                        modifier = Modifier.padding(start = 12.dp)
                     ) {
-                        SubHeader(title = stringResource(R.string.world_label_description))
-                        Description(text = world.description)
+                        for (i in 0 until world.heat) {
+                            Icon(Icons.Filled.LocalFireDepartment, contentDescription = null, modifier = Modifier.size(28.dp).padding(4.dp))
+                        }
                     }
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-                    ElevatedCard(
-                        modifier = Modifier
-                            .padding(bottom = 16.dp)
-                            .widthIn(Dp.Unspecified, 520.dp)
+                    SubHeader(title = "${stringResource(R.string.world_title_popularity)} (${world.popularity})")
+                    Row(
+                        modifier = Modifier.padding(start = 12.dp)
                     ) {
-                        val userTimeZone = TimeZone.getDefault().toZoneId()
-                        val formatter = DateTimeFormatter.ofLocalizedDateTime(java.time.format.FormatStyle.SHORT)
-                            .withLocale(Locale.getDefault())
-
-                        val createdAtFormatted = ZonedDateTime.parse(world.createdAt).withZoneSameInstant(userTimeZone).format(formatter)
-                        val updatedAtFormatted = ZonedDateTime.parse(world.updatedAt).withZoneSameInstant(userTimeZone).format(formatter)
-
-                        SubHeader(title = stringResource(R.string.world_title_occupants))
-                        Description(text = "Public (${NumberFormat.getInstance().format(world.publicOccupants)}) Private (${NumberFormat.getInstance().format(world.privateOccupants)}) Total (${NumberFormat.getInstance().format(world.occupants)})")
-
-                        val occupancyRate = world.visits.takeIf { it != 0 }?.let {
-                            String.format(Locale.ENGLISH, "%.1f", world.favorites.toFloat() / it.toFloat() * 100)
-                        } ?: "0.0%"
-
-                        SubHeader(title = stringResource(R.string.world_title_favorites))
-                        Description(text = "${NumberFormat.getInstance().format(world.favorites)} (${occupancyRate}%)")
-
-                        SubHeader(title = stringResource(R.string.world_title_visits))
-                        Description(text = NumberFormat.getInstance().format(world.visits))
-
-                        SubHeader(title = stringResource(R.string.world_title_capacity))
-                        Description(text = "${world.recommendedCapacity} (${world.capacity})")
-
-                        SubHeader(title = stringResource(R.string.world_title_created_at))
-                        Description(text = createdAtFormatted)
-
-                        SubHeader(title = stringResource(R.string.world_title_updated_at))
-                        Description(text = updatedAtFormatted)
-
-                        SubHeader(title = stringResource(R.string.world_title_labs_publication_date))
-                        Description(text = updatedAtFormatted)
-
-                        SubHeader(title = stringResource(R.string.world_title_publication_date))
-                        Description(text = updatedAtFormatted)
-
-                        SubHeader(title = "${stringResource(R.string.world_title_heat)} (${world.heat})")
-
-                        Row(
-                            modifier = Modifier.padding(start = 12.dp)
-                        ) {
-                            for (i in 0..world.heat) {
-                                Icon(Icons.Filled.LocalFireDepartment, contentDescription = null, modifier = Modifier.size(28.dp).padding(4.dp))
-                            }
+                        for (i in 0 until world.popularity) {
+                            Icon(Icons.Filled.Favorite, contentDescription = null, modifier = Modifier.size(28.dp).padding(4.dp))
                         }
-
-                        SubHeader(title = "${stringResource(R.string.world_title_popularity)} (${world.popularity})")
-
-                        Row(
-                            modifier = Modifier.padding(start = 12.dp)
-                        ) {
-                            for (i in 0..world.popularity) {
-                                Icon(Icons.Filled.Favorite, contentDescription = null, modifier = Modifier.size(28.dp).padding(4.dp))
-                            }
-                        }
-
-                        SubHeader(title = stringResource(R.string.world_label_tags))
-                        BadgesFromTags(
-                            tags = world.tags,
-                            tagPropertyName = "author_tag",
-                            localizationResourceInt = R.string.world_text_no_tags
-                        )
                     }
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    SubHeader(title = stringResource(R.string.world_label_tags))
+                    BadgesFromTags(
+                        tags = world.tags,
+                        tagPropertyName = "author_tag",
+                        localizationResourceInt = R.string.world_text_no_tags
+                    )
                 }
             }
         }
@@ -389,21 +365,18 @@ class WorldInfoScreen(
             )
         }
 
-        if (instances.isEmpty()) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(stringResource(R.string.world_instance_no_public_instances_message))
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                items(instances) { instance ->
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 16.dp)
+        ) {
+            if (instances.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.world_instance_no_public_instances_message),
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            } else {
+                instances.forEach { instance ->
                     instance.second?.let { instanceObj ->
                         InstanceItem(
                             intent = instance.first,
@@ -413,6 +386,7 @@ class WorldInfoScreen(
                                 model.selectedInstanceId.value = instanceObj.id
                             }
                         )
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
