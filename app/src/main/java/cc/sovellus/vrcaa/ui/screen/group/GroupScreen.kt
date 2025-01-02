@@ -1,5 +1,6 @@
 package cc.sovellus.vrcaa.ui.screen.group
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -42,7 +43,8 @@ import cc.sovellus.vrcaa.ui.screen.misc.LoadingIndicatorScreen
 import cc.sovellus.vrcaa.ui.screen.profile.UserProfileScreen
 
 class GroupScreen(
-    private val groupId: String
+    private val groupId: String,
+    private val peek: Boolean = false
 ) : Screen {
 
     override val key = uniqueScreenKey
@@ -80,11 +82,26 @@ class GroupScreen(
             Toast.makeText(
                 context, stringResource(R.string.group_toast_not_found_message), Toast.LENGTH_SHORT
             ).show()
-            navigator.pop()
+
+            if (peek) {
+                if (context is Activity) {
+                    context.finish()
+                }
+            } else {
+                navigator.pop()
+            }
         } else {
             Scaffold(topBar = {
                 TopAppBar(navigationIcon = {
-                    IconButton(onClick = { navigator.pop() }) {
+                    IconButton(onClick = {
+                        if (peek) {
+                            if (context is Activity) {
+                                context.finish()
+                            }
+                        } else {
+                            navigator.pop()
+                        }
+                    }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = null
